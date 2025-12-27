@@ -5,46 +5,47 @@ interface PreloaderProps {
 }
 
 export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
-  const [stage, setStage] = useState(0);
+  const [isExiting, setIsExiting] = useState(false);
+  const [showTagline, setShowTagline] = useState(false);
 
   useEffect(() => {
-    // Stage 1: Brand Name Entry
-    const timer1 = setTimeout(() => setStage(1), 500);
-    // Stage 2: Tagline Entry
-    const timer2 = setTimeout(() => setStage(2), 1500);
-    // Stage 3: Fade Out
-    const timer3 = setTimeout(() => setStage(3), 3000);
-    // Complete
-    const timer4 = setTimeout(() => onComplete(), 3600);
+    // Reveal tagline slightly after mount
+    const timerTagline = setTimeout(() => {
+      setShowTagline(true);
+    }, 500);
+
+    // Start exit sequence
+    const timerExit = setTimeout(() => {
+      setIsExiting(true);
+    }, 2500);
+
+    // Unmount
+    const timerComplete = setTimeout(onComplete, 3300);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearTimeout(timer4);
+      clearTimeout(timerTagline);
+      clearTimeout(timerExit);
+      clearTimeout(timerComplete);
     };
   }, [onComplete]);
 
-  if (stage === 3) return null; // Or keep in DOM but transparent
-
   return (
-    <div className={`fixed inset-0 z-[100] bg-midnight flex flex-col items-center justify-center transition-opacity duration-1000 ${stage === 3 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      <div className="relative z-10 text-center">
-        <h1 className={`text-6xl md:text-8xl font-black text-white tracking-tighter transform transition-all duration-1000 ${stage >= 1 ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          HIVE EX
-        </h1>
-        <p className={`mt-4 text-electric text-sm uppercase tracking-[0.3em] font-medium transform transition-all duration-1000 delay-300 ${stage >= 2 ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'}`}>
-          Intelligence in Recruitment
-        </p>
-      </div>
-
-      {/* Loading Bar */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-900">
-        <div 
-            className="h-full bg-gradient-to-r from-indigo via-electric to-indigo animate-gradient-x transition-all duration-[3000ms] ease-out"
-            style={{ width: stage >= 1 ? '100%' : '0%' }}
-        />
-      </div>
+    <div 
+        className={`fixed inset-0 z-[100] bg-midnight flex flex-col items-center justify-center transition-all duration-700 ease-out-expo ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+    >
+        <div className={`flex flex-col items-center transition-all duration-1000 ease-out-expo ${isExiting ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}>
+            <h1 className="text-5xl md:text-7xl font-display font-bold text-white tracking-tighter mb-6">
+                HIVE<span className="text-electric">.EX</span>
+            </h1>
+            
+            <div className="overflow-hidden h-8 flex items-center justify-center">
+                <p 
+                    className={`text-xs md:text-sm font-sans text-slate-400 font-medium tracking-[0.2em] uppercase transition-all duration-1000 ease-out-expo transform ${showTagline ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
+                >
+                    Top 1% Tech Talent. Deployed in 48 Hours.
+                </p>
+            </div>
+        </div>
     </div>
   );
 };

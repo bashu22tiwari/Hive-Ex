@@ -9,10 +9,10 @@ export interface JobProfile {
 }
 
 export enum NavRoute {
-  HOME = '#/',
-  ABOUT = '#/about',
-  SERVICES = '#/services',
-  CONTACT = '#/contact',
+  HOME = '/',
+  ABOUT = '/about',
+  SERVICES = '/services',
+  CONTACT = '/contact',
 }
 
 export interface ServiceCardProps {

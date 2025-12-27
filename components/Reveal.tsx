@@ -6,7 +6,11 @@ interface RevealProps {
   className?: string;
 }
 
-export const Reveal: React.FC<RevealProps> = ({ children, delay = 0, className = '' }) => {
+export const Reveal: React.FC<RevealProps> = ({ 
+  children, 
+  delay = 0, 
+  className = '', 
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -15,12 +19,12 @@ export const Reveal: React.FC<RevealProps> = ({ children, delay = 0, className =
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect(); // Only animate once
+          observer.disconnect();
         }
       },
       {
-        threshold: 0.1, // Trigger when 10% visible
-        rootMargin: '0px 0px -50px 0px', // Offset slightly
+        threshold: 0.15, // Wait until 15% is visible
+        rootMargin: '0px 0px -50px 0px',
       }
     );
 
@@ -33,14 +37,14 @@ export const Reveal: React.FC<RevealProps> = ({ children, delay = 0, className =
     };
   }, []);
 
-  const style = {
+  const style: React.CSSProperties = {
     transitionDelay: `${delay}s`,
   };
 
   return (
     <div
       ref={ref}
-      className={`reveal ${isVisible ? 'active' : ''} ${className}`}
+      className={`reveal-base ${isVisible ? 'reveal-active' : ''} ${className}`}
       style={style}
     >
       {children}
